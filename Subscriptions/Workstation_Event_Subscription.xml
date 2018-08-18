@@ -1,0 +1,50 @@
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">*[System[(Level=1  or Level=2 or Level=3 or Level=4 or Level=0 or Level=5)]]</Select> <!-- Collects all Sysmon data from host, use Sysmon configs to filter on hosts -->
+  </Query>
+  <Query Id="1" Path="System">
+    <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and (Level=1 or Level=2 or Level=3 or Level=4 or Level=0) and (EventID=7022 or EventID=7023 or EventID=7024 or EventID=7026 or EventID=7031 or EventID=7032 or EventID=7034)]]</Select>    <!-- Service Failures and Crashes; T1031 Modifying Existing Service -->
+    <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and (Level=1 or Level=2 or Level=3 or Level=4 or Level=0) and (EventID=7045 or EventID=7040)]]</Select> <!-- 7045: Service Installed, 7040: Service Start Type Changed; T1050 New Service; T1031 Modifying Existing Service; T1035 Service Execution -->
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-WER-SystemErrorReporting'] and Level=2 and EventID=1001]]</Select> <!-- Error Reporting; T1068 Exploitation for Privilege Escalation -->
+  </Query>
+  <Query Id="2" Path="Security">
+    <Select Path="Security">*[System[(EventID=5144)]]</Select>    <!-- 5144: Network Share Delete; T1126 Network Share Connection Removal -->
+    <Select Path="Security">*[System[(EventID=5140)]]</Select>    <!-- 5140: A network share object was accessed; T1077 Windows Admin Shares -->
+    <Select Path="Security">*[System[(EventID=4624)]]</Select>    <!-- 4624: An account was successfully logged on; T1078 Valid Accounts -->
+    <Select Path="Security">*[System[(EventID=4625)]]</Select>    <!-- 4625: An account failed to log on; T1110 Brute Force --> 
+    <Select Path="Security">*[System[(EventID=4720)]]</Select>    <!-- 4720: A user account was created; T1136 Create Account -->
+    <Select Path="Security">*[System[(EventID=4697)]]</Select>    <!-- 4697: A service was installed in the system; T1050 New Service -->
+    <Select Path="Security">*[System[(EventID=4950)]]</Select>    <!-- 4950: A Windows Firewall setting has changed; T1089 Disabling Security Tools; T1070 Indicator Removal on a Host -->
+    <Select Path="Security">*[System[(EventID=4698)]]</Select>    <!-- 4698: A scheduled task was created; T1053 Scheduled Task -->
+    <Select Path="Security">*[System[(EventID=4699)]]</Select>    <!-- 4699: A scheduled task was deleted; T1070 Indicator Removal on a Host --> 
+    <Select Path="Security">*[System[(EventID=4702)]]</Select>    <!-- 4702: A scheduled task was updated;  T1053 Scheduled Task  -->
+    <Select Path="Security">*[System[(EventID=1102)]]</Select>    <!-- 1102: Event Log Cleared; T1070 Indicator Removal on a Host -->	
+	<Select Path="Security">*[System[(EventID=4610)]]</Select>    <!-- 4610: Local Security Authority modification; T1101 Security Support Provider -->
+	<Select Path="Security">*[System[(EventID=4611)]]</Select>    <!-- 4611: Local Security Authority modification; T1101 Security Support Provider -->
+	<Select Path="Security">*[System[(EventID=4614)]]</Select>    <!-- 4614: Local Security Authority modification; T1101 Security Support Provider -->
+	<Select Path="Security">*[System[(EventID=4622)]]</Select>    <!-- 4622: Local Security Authority modification; T1101 Security Support Provider -->
+	<Select Path="Security">*[System[(EventID=4672)]]</Select>    <!-- 4672: Special privileges assigned to new logon; T1098 Account Manipulation -->
+	<Select Path="Security">*[System[(EventID=4723)]]</Select>    <!-- 4672: Account password change attempted; T1098 Account Manipulation -->
+	<Select Path="Security">*[System[(EventID=4719)]]</Select>    <!-- 4719: System audit policy was changed; T1089 Disabling Security Tools -->
+	<Select Path="Security">*[System[(EventID=4732)]]</Select>    <!-- 4732: A member was added to a security-enabled local group; T1098 Account Manipulation -->
+	<Select Path="Security">*[System[(EventID=4720)]]</Select>    <!-- 4720: a local user account was created; T1136 Create Account -->
+    <Suppress Path="Security"> *[EventData[Data[@Name='IpAddress'] and (Data='1.1.1.1')]] </Suppress>  <!-- Supress Scanner IP Addresses; CHANGE THIS IP ADDRESS -->
+  </Query>
+  <Query Id="3" Path="Application">
+    <Select Path="Application">*[System[Provider[@Name='Windows Error Reporting']]]</Select>  <!-- Error Reporting; T1068 Exploitation for Privilege Escalation -->
+  </Query>
+  <Query Id="4" Path="Microsoft-Windows-AppLocker/EXE and DLL">
+    <Select Path="Microsoft-Windows-AppLocker/EXE and DLL">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/MSI and Script">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Deployment">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Execution">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+  </Query>  
+  <Query Id="5" Path="Microsoft-Windows-PowerShell/Operational">
+    <Select Path="Microsoft-Windows-PowerShell/Operational">*[System[(EventID=4104)]]</Select> <!-- 4104: PowerShell Logs with Script block; T1086 PowerShell -->
+    <Suppress Path="Microsoft-Windows-PowerShell/Operational">*[EventData[Data[@Name='Path'] and (Data='C:\WINDOWS\CCM\SystemTemp')]]</Suppress> <!-- Filter out noisy SCCM Powershell Scripts -->
+    <Suppress Path="Microsoft-Windows-PowerShell/Operational">*[EventData[Data[@Name='Path'] and (Data='C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1')]]</Suppress> <!-- Filter out user profiles -->
+  </Query>
+  <Query Id="6" Path="Microsoft-Windows-Kernel-PnP/Configuration">
+    <Select Path="Microsoft-Windows-Kernel-PnP/Configuration">*[System[(EventID=410 or EventID=420)]]</Select> <!-- T1091 Replication Through Removable Media; T1025 Data from Removable Media; T1052 Exfiltration Over Physical Medium -->
+  </Query>
+</QueryList>
