@@ -1,0 +1,46 @@
+<QueryList>
+  <Query Id="0" Path="Microsoft-Windows-Sysmon/Operational">
+    <Select Path="Microsoft-Windows-Sysmon/Operational">*</Select>
+  </Query>
+  <Query Id="1" Path="System">
+    <Select Path="System">*[System[Provider[@Name='Microsoft-Windows-Kernel-General'] and (EventID=12 or EventID=13)]]</Select>
+    <Select Path="System">*[System[Provider[@Name='Service Control Manager'] and (EventID = 7000 or EventID=7045)]]</Select>
+    <Select Path="System">*[System[(EventID=4697)]]</Select>
+    <Select Path="System">*[System[(EventID=104)]]</Select>
+  </Query>
+  <Query Id="2" Path="Application">
+    <Select Path="Application">*[System[Provider[@Name='Application Error'] and (EventID=1000)]]</Select>
+    <Select Path="Application">*[System[Provider[@Name='Application Hang'] and (EventID=1002)]]</Select>
+  </Query>
+  <Query Id="3" Path="Security">
+    <Select Path="Security">*</Select>
+    <Suppress Path="Security">*[System[(EventID=4634)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4662)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4670)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4672)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4673)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4674)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4688)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4769)]]</Suppress>
+    <Suppress Path="Security">*[System[(EventID=4776)]]</Suppress>
+    <Suppress Path="Security">*[EventData[Data[@Name='LogonType'] and (Data='3' or Data='5')]]</Suppress>
+  </Query>
+  <Query Id="4" Path="Security">
+    <Select Path="Security">*[System[(EventID=5136)]]</Select>
+    <Suppress Path="Security">*[EventData[Data[@Name='SubjectUserSid'] and (Data='S-1-5-18')]]</Suppress>
+    <Suppress Path="Security">*[EventData[Data[@Name='AttributeLDAPDisplayName'] and (Data='info')]]</Suppress>
+  </Query>
+  <Query Id="5" Path="Microsoft-Windows-AppLocker/EXE and DLL">
+    <Select Path="Microsoft-Windows-AppLocker/EXE and DLL">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/MSI and Script">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Deployment">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+    <Select Path="Microsoft-Windows-AppLocker/Packaged app-Execution">*[System[Provider[@Name='Microsoft-Windows-AppLocker'] and (Level=1 or Level=2 or Level=3)]]</Select> 
+  </Query>
+    <Query Id="6" Path="Microsoft-Windows-PowerShell/Operational">
+    <Select Path="Microsoft-Windows-PowerShell/Operational">*[System[(EventID=4104)]]</Select>
+    <Suppress Path="Microsoft-Windows-PowerShell/Operational">*[EventData[Data[@Name='Path'] and (Data='C:\WINDOWS\CCM\SystemTemp')]]</Suppress>
+  </Query>
+  <Query Id="7" Path="Microsoft-Windows-Kernel-PnP/Configuration">
+    <Select Path="Microsoft-Windows-Kernel-PnP/Configuration">*[System[(EventID=410 or EventID=420)]]</Select>
+  </Query>
+</QueryList>
