@@ -1,0 +1,11 @@
+<QueryList>
+  <Query Id="0" Path="AD FS/Admin">
+    <Select Path="AD FS/Admin">*[System[(EventID=1200 or EventID=1202 or EventID=307 or EventID=510)]]</Select>
+  </Query>
+  <Query Id="1" Path="Microsoft-Windows-CertificateServicesClient-Lifecycle-System/Operational">
+    <Select Path="Microsoft-Windows-CertificateServicesClient-Lifecycle-System/Operational">*[System[(EventID=1007)]]</Select>
+  </Query>
+  <Query Id="2" Path="Security">
+    <Select Path="Security">*[System[(EventID=4662)]]</Select>
+  </Query>
+</QueryList>
